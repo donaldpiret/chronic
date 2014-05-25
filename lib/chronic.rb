@@ -54,8 +54,6 @@ require 'chronic/repeaters/repeater_time'
 #   Chronic.parse('monday', :context => :past)
 #     #=> Mon Aug 21 12:00:00 PDT 2006
 module Chronic
-  VERSION = '0.10.2'
-
   class << self
 
     # Returns true when debug mode is enabled.
@@ -72,12 +70,26 @@ module Chronic
     #     # => Thu, 15 Jun 2006 05:45:00 UTC +00:00
     #
     # Returns The Time class Chronic uses internally.
-    attr_accessor :time_class
+    def time_class
+      Thread.current[:chronic_time_class] || ::Time
+    end
+
+    def time_class=(klass)
+      Thread.current[:chronic_time_class] = klass
+    end
+
+    def with_time_class(klass, &block)
+      klazz = time_class
+      begin
+        time_class = klass
+        block.call
+      ensure
+        time_class = klazz
+      end
+    end
   end
 
   self.debug = false
-  self.time_class = ::Time
-
 
   # Parses a string containing a natural language date or time.
   #
