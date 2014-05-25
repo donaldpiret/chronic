@@ -162,6 +162,15 @@ class TestChronic < TestCase
     end
   end
 
+  def test_with_time_class
+    org = Chronic.time_class
+    Chronic.with_time_class(::DateTime) do
+      assert_equal DateTime.new(2013, 8, 27, 20, 30, 40, '+05:30'), Chronic.construct(2013, 8, 27, 20, 30, 40, '+05:30')
+      assert_equal DateTime.new(2013, 8, 27, 20, 30, 40, '-08:00'), Chronic.construct(2013, 8, 27, 20, 30, 40, -28800)
+    end
+    assert_equal Chronic.time_class, org
+  end
+
   def test_activesupport
 =begin
     # ActiveSupport needs MiniTest '~> 4.2' which conflicts with '~> 5.0'

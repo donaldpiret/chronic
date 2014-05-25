@@ -78,13 +78,12 @@ module Chronic
       Thread.current[:chronic_time_class] = klass
     end
 
-    def with_time_class(klass, &block)
-      klazz = time_class
+    def with_time_class(new_klass)
       begin
-        time_class = klass
-        block.call
+        old_klass, ::Chronic.time_class = ::Chronic.time_class, new_klass
+        yield
       ensure
-        time_class = klazz
+        ::Chronic.time_class = old_klass
       end
     end
   end
